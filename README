@@ -1,0 +1,8 @@
+Are you using Chrome? Are you using Transmission on a remote machine/nas/whatever? Then you are like me; and I developed this very simple extension to instruct my remote Transmission instance to initiate the downloading of a torrent I find while browsing. 
+Set the options, then, while browsing, right click on a link to a torrent; choose "Add Torrent" and - BANG! You're done.
+
+Little extra: you'll find a way to automatically add torrents from a site that caches torrents (torrage.com). Just highlight the hash of a torrent, right-click, "Add Torrent", and (if that torrent is on that caching site), then again - BANG. 
+
+If everything went smooth you'll be informed of the filename you started downloading.
+
+

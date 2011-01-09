@@ -1,0 +1,18 @@
+{
+  "name": "Chrome2Transmission",
+  "version": "1.0",
+  "description": "__MSG_descrizione__",
+  "permissions": [
+    "http://*/*",
+    "contextMenus",
+    "notifications"
+  ],
+  "icons": {
+    "16": "transmission-16.png",
+    "48": "transmission-48.png",
+    "128": "transmission-128.png"
+  },
+  "background_page": "background.html",
+  "options_page": "options.html",
+  "default_locale": "it"
+}

@@ -1,0 +1,38 @@
+{
+	"descrizione": {
+		"message": "Aggiunge un torrent tramite transmission remote."
+	},
+	"host": { 
+		"message": "Host"
+	},
+	"port": {
+		"message": "Porta"
+	},
+	"username": {
+		"message": "Username"
+	},
+	"password": {
+		"message": "Password"
+	},
+	"torrentCache": {
+		"message": "Cache Torrent (url)"
+	},
+	"add": {
+		"message": "Aggiungi Torrent"
+	},
+	"added": {
+		"message": "Torrent Aggiunto"
+	},
+	"notAdded": {
+		"message": "Torrent NON Aggiunto"
+	},
+	"problem": {
+		"message": "Impossibile aggiungere il torrent"
+	},
+	"notATorrent": {
+		"message": "Non c'è alcun torrent"
+	},
+	"optionsTitle": {
+		"message": "Opzioni di Chrome 2 Transmission"
+	}
+}

@@ -1,0 +1,121 @@
+<script>
+var OPTIONS = [
+		"host", "port", "username", "password", "torrentCache"
+	];
+
+// Restores select box state to saved value from localStorage.
+function restoreOptions() {
+	var DEFAULT = {
+			'host': '127.0.0.1',
+			'port': '9091',
+			'username': '',
+			'password': '',
+			'torrentCache': "http://torrage.com/torrent/$$.torrent"
+		}, options = {};
+	OPTIONS.map(function(el, ix) {
+			var htmlItem = document.getElementById(el),
+				value;
+			if (localStorage.hasOwnProperty(el)) {
+				value = localStorage[el];
+			} else {
+				value = DEFAULT[el] || "";
+			}
+			options[el] = value;
+		});
+	return options;
+}
+
+function transmissionRemote(jsonCmd, method, callback, scope) {
+		var options = restoreOptions(),
+			schema = "http",
+			// End of config
+			securityHeaderTag = "X-Transmission-Session-Id",
+			securityHeader = sessionStorage[securityHeaderTag],
+			req = new XMLHttpRequest(),
+			url = schema + "://" + options.host + ":" + options.port + "/transmission/rpc";
+
+		req.open(method.toUpperCase(), url, true);
+		req.setRequestHeader(securityHeaderTag, securityHeader);
+		req.onreadystatechange = function() {
+				var jsonResp;
+				if (req.readyState == 4) {
+					if (req.status == 409) {
+						sessionStorage[securityHeaderTag] = req.getResponseHeader(securityHeaderTag);
+						transmissionRemote(jsonCmd, method, callback, scope);
+						return;
+					}
+					try {
+						jsonResp = window.JSON.parse(req.responseText);
+					} catch(e) {
+						jsonResp = {'results': 'failure', 'arguments': {"reason": chrome.i18n.getMessage("problem"), 'details': req.responseText}}; 
+					}
+					callback.apply(scope, [jsonResp]);
+				}		
+			};
+		req.send(window.JSON.stringify(jsonCmd));
+	}
+
+function addtorrent(info) {
+	var userSelection = info.selectionText || "",
+		hashMatch = /([0-9a-f]{40})/i,
+		linkMatch = /\.torrent$/i,
+		torrentCache = restoreOptions()["torrentCache"],
+		cmd = {
+				'method': 'torrent-add',
+				'arguments': {}
+			};
+	console.log(info.linkUrl);
+	if (userSelection.match(hashMatch)) {
+		cmd.arguments.filename = torrentCache.replace(/\$\$/, userSelection.toUpperCase());
+	} else if (info.linkUrl && info.linkUrl.match(linkMatch)) {
+		cmd.arguments.filename = info.linkUrl;
+	}
+	
+	if (cmd.arguments.filename) {
+		transmissionRemote(
+				cmd,
+				"POST", 
+				function(jsonresp) { 
+						/*
+							success: {"arguments":{"torrent-added":{"hashString":"1cd3ef093ed054d6b94bde6b2ed0763dc6fab8c6","id":42,"name":"(DVDRIP-XVID-ITA) REQUIEM FOR A DREAM.avi"}},"result":"success"}
+
+						*/
+						var icon, title, msg, notification;
+						if (jsonresp.result == "success") {
+							icon = 'ok.png';
+							title = chrome.i18n.getMessage("added");
+							msg = jsonresp.arguments["torrent-added"]['name'];
+						} else {
+							icon = 'warn.png';
+							title = chrome.i18n.getMessage("notAdded");
+							msg = jsonresp.arguments.reason;
+						}
+							
+						notification = webkitNotifications.createNotification(
+							  icon,  // icon url - can be relative
+							  title,  // notification title
+							  msg // notification body text
+							);
+
+						// Then show the notification.
+						notification.show();
+						window.setTimeout(function() { notification.cancel(); }, 5000);
+					}
+			);
+	} else {
+		notification = webkitNotifications.createNotification(
+			  'warn.png',  // icon url - can be relative
+			  chrome.i18n.getMessage("notAdded"),  // notification title
+			  chrome.i18n.getMessage("notATorrent") // notification body text
+			);
+
+		// Then show the notification.
+		notification.show();
+		window.setTimeout(function() { notification.cancel(); }, 5000);
+	}
+}
+
+var myid = chrome.contextMenus.create({"title": chrome.i18n.getMessage("add"), "contexts":["selection", "link"],
+                                       "onclick": addtorrent});
+
+</script>

@@ -1,0 +1,73 @@
+<html>
+<head><title>Chrome 2 Transmission</title></head>
+<script type="text/javascript">
+var OPTIONS = [
+		"host", "port", "username", "password", "torrentCache"
+	];
+
+// Saves options to localStorage.
+function saveOptions() {
+	OPTIONS.map(function(el, ix) {
+			localStorage[el] = document.getElementById(el).value;
+		});
+
+	// Update status to let user know options were saved.
+	var status = document.getElementById("status");
+	status.innerHTML = "Opzioni salvate";
+	setTimeout(function() {
+		status.innerHTML = "";
+	}, 750);
+}
+
+// Restores select box state to saved value from localStorage.
+function restoreOptions() {
+	var DEFAULT = {
+			'host': '127.0.0.1',
+			'port': '9091',
+			'username': '',
+			'password': '',
+			'torrentCache': "http://torrage.com/torrent/$$.torrent"
+		},
+		optionsBody = [];
+	OPTIONS.map(function(el, ix) {
+			var value;
+			if (localStorage.hasOwnProperty(el)) {
+				value = localStorage[el];
+			} else {
+				value = DEFAULT[el] || "";
+			}
+			optionsBody.push('<tr> <td>' +chrome.i18n.getMessage(el)+ '</td> <td><input type="text" id="'+el+'" value="'+value+'" /></td></tr>');
+		});
+	document.getElementById("optionsBody").innerHTML = optionsBody.join("");
+	document.getElementById("optionsCaption").innerHTML = chrome.i18n.getMessage("optionsTitle")
+}
+
+</script>
+<style>
+	body { font-family: sans-serif; }
+	div#body { border: 1px solid #CCC; -webkit-box-shadow: 0 0 10px #222; padding: 2px; 
+			-webkit-border-radius: 5px;	width: 600px; margin: 2px auto;
+			background-color: #EEE;
+		}
+	table { width: 100%; }
+	table tr:nth-child(2n-1) { background-color: rgba(100,100,100,0.1); }
+	table tfoot td { text-align: right; }
+	#status { font-size: small; font-style: italic; }
+	input { width: 100%; }
+	
+
+</style>
+
+<body onload="restoreOptions()">
+<div id="body">
+<table>
+<caption id="optionsCaption"></caption>
+<tfoot>
+	<tr><td colspan="2"><span id="status"></span><button onclick="saveOptions();">Salva</button></tr>
+</tfoot>
+<tbody id="optionsBody">
+</tbody>
+</table>
+</div>
+</body>
+</html>

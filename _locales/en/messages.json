@@ -1,0 +1,38 @@
+{
+	"descrizione": {
+		"message": "Adds a torrent to Transmission queue"
+	},
+	"host": { 
+		"message": "Host"
+	},
+	"port": {
+		"message": "Port"
+	},
+	"username": {
+		"message": "Username"
+	},
+	"password": {
+		"message": "Password"
+	},
+	"torrentCache": {
+		"message": "Cache Torrent (url)"
+	},
+	"add": {
+		"message": "Add Torrent"
+	},
+	"added": {
+		"message": "Torrent Added"
+	},
+	"notAdded": {
+		"message": "Torrent NOT Added"
+	},
+	"notATorrent": {
+		"message": "There's no Torrent here"
+	},
+	"problem": {
+		"message": "This torrent couldn't be found"
+	},
+	"optionsTitle": {
+		"message": "Options for Chrome 2 Transmission"
+	}
+}
