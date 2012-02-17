@@ -34,7 +34,7 @@ function transmissionRemote(jsonCmd, method, callback, scope) {
 			req = new XMLHttpRequest(),
 			url = schema + "://" + options.host + ":" + options.port + "/transmission/rpc";
 
-		req.open(method.toUpperCase(), url, true);
+		req.open(method.toUpperCase(), url, true, options.username, options.password);
 		req.setRequestHeader(securityHeaderTag, securityHeader);
 		req.onreadystatechange = function() {
 				var jsonResp;
@@ -58,7 +58,8 @@ function transmissionRemote(jsonCmd, method, callback, scope) {
 function addtorrent(info) {
 	var userSelection = info.selectionText || "",
 		hashMatch = /([0-9a-f]{40})/i,
-		linkMatch = /\.torrent$/i,
+		linkMatch = /\.torrent/i,
+		magnetMatch = /^magnet:/,
 		torrentCache = restoreOptions()["torrentCache"],
 		cmd = {
 				'method': 'torrent-add',
@@ -68,6 +69,8 @@ function addtorrent(info) {
 	if (userSelection.match(hashMatch)) {
 		cmd.arguments.filename = torrentCache.replace(/\$\$/, userSelection.toUpperCase());
 	} else if (info.linkUrl && info.linkUrl.match(linkMatch)) {
+		cmd.arguments.filename = info.linkUrl;
+	} else if (info.linkUrl && info.linkUrl.match(magnetMatch)) {
 		cmd.arguments.filename = info.linkUrl;
 	}
 	
@@ -88,7 +91,7 @@ function addtorrent(info) {
 						} else {
 							icon = 'warn.png';
 							title = chrome.i18n.getMessage("notAdded");
-							msg = jsonresp.arguments.reason;
+							msg = jsonresp.result;
 						}
 							
 						notification = webkitNotifications.createNotification(
